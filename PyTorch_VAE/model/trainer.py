@@ -241,15 +241,12 @@ class ModelTrainerVAE(object):
                 all_data_target.append(labels.detach().to('cpu').numpy().copy())
         all_data = np.concatenate(all_data)
         all_data_target = np.concatenate(all_data_target)
-        # targetがnanである行を落とす
-        all_data_ = all_data[~np.isnan(all_data_target).any(axis=1), :]
-        all_data_target_ = all_data_target[~np.isnan(all_data_target).any(axis=1), :]
         pca = PCA()
         pca.fit(all_data)
-        feature = pca.transform(all_data_)
+        feature = pca.transform(all_data)
         plt.figure()
         sc = plt.scatter(feature[:, 0], feature[:, 1], alpha=0.5,
-                         vmin=-3, vmax=3, c=all_data_target_[:])
+                         c=all_data_target)
         plt.colorbar(sc)
         plt.xlabel("z_pc1")
         plt.ylabel("z_pc2")
