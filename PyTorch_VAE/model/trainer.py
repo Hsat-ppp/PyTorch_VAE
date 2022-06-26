@@ -221,7 +221,7 @@ class ModelTrainerVAE(object):
         with torch.no_grad():
             img, _, _ = self.model.decode(z_t.to(self.device))
         for idx in range(img.shape[0]):
-            imshow(img[idx], 'motor_img_history/' + str(idx) + '.png')
+            imshow(img[idx], str(idx) + '.png')
         return img
 
     def visualize_label_in_latent_space(self, pre_trained_file=None):
