@@ -31,8 +31,8 @@ def set_argparser_options():
                         help='value for gamma of exp lr reducer.')
     parser.add_argument('-s', '--seed_num', type=int,
                         help='seed number for reproduction.')
-    parser.add_argument('-q', '--quiet', default=False, type=bool,
-                        help='if True, we disables progress bar.')
+    parser.add_argument('-q', '--quiet', action='store_true',
+                        help='if set, we disables progress bar.')
     return parser
 
 
