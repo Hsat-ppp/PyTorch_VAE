@@ -17,7 +17,7 @@ logger = logging.getLogger('trainer')
 
 class ModelTrainerVAE(object):
     """
-    model training class for VAE_joint.
+    model training class for VAE.
     """
     def __init__(self, model, device, history_file_name, output_model_file_name):
         """init function.
