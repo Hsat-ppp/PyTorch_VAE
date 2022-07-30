@@ -12,7 +12,7 @@ class ds(nn.Module):
         super().__init__()
         self.conv1 = nn.ModuleList([nn.Conv2d(o_channel, o_channel, 3, padding=1) for _ in range(c_num)])
         self.bn1 = nn.ModuleList([nn.BatchNorm2d(o_channel) for _ in range(c_num)])
-        self.ds1 = nn.Conv2d(o_channel, o_channel, 4, stride=2, padding=1)  # down sampling to a half size
+        self.ds1 = nn.MaxPool2d(2, stride=2)  # down sampling to a half size
 
     # 順方向計算
     def forward(self, x):
@@ -20,7 +20,7 @@ class ds(nn.Module):
         for l, bn in zip(self.conv1, self.bn1):
             x = F.leaky_relu(bn(l(x)))
         x = x + x_input
-        x = F.leaky_relu(self.ds1(x))
+        x = self.ds1(x)
         return x
 
 
@@ -29,9 +29,9 @@ class us(nn.Module):
     # ネットワーク構造の定義
     def __init__(self):
         super().__init__()
-        self.conv1 = nn.ModuleList([nn.ConvTranspose2d(o_channel, o_channel, 3, padding=1) for _ in range(c_num)])
+        self.conv1 = nn.ModuleList([nn.Conv2d(o_channel, o_channel, 3, padding=1) for _ in range(c_num)])
         self.bn1 = nn.ModuleList([nn.BatchNorm2d(o_channel) for _ in range(c_num)])
-        self.us1 = nn.ConvTranspose2d(o_channel, o_channel, 4, stride=2, padding=1)  # up sampling to a doubled size
+        self.us1 = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)  # up sampling to a doubled size
 
     # 順方向計算
     def forward(self, x):
@@ -39,7 +39,7 @@ class us(nn.Module):
         for l, bn in zip(self.conv1, self.bn1):
             x = F.leaky_relu(bn(l(x)))
         x = x + x_input
-        x = F.leaky_relu(self.us1(x))
+        x = self.us1(x)
         return x
 
 
