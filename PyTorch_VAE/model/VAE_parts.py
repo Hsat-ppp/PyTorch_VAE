@@ -68,7 +68,7 @@ class decoder(nn.Module):
     # ネットワーク構造の定義
     def __init__(self):
         super().__init__()
-        self.output_conv = nn.ConvTranspose2d(o_channel, i_channel, 3, padding=1)
+        self.output_conv = nn.Conv2d(o_channel, i_channel, 3, padding=1)
         self.up_sampling = nn.ModuleList([us() for _ in range(s_num)])
         self.fc1 = nn.ModuleList([nn.Linear(fc1_nodes, o_channel*(height//(2**s_num))*(width//(2**s_num)))])
         self.input_fc = nn.Linear(dim_latent, fc1_nodes)
