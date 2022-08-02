@@ -12,15 +12,15 @@ class ds(nn.Module):
         super().__init__()
         self.conv1 = nn.ModuleList([nn.Conv2d(o_channel, o_channel, 3, padding=1) for _ in range(c_num)])
         self.bn1 = nn.ModuleList([nn.BatchNorm2d(o_channel) for _ in range(c_num)])
-        self.ds1 = nn.MaxPool2d(2, stride=2)  # down sampling to a half size
+        self.ds1 = nn.Conv2d(o_channel, o_channel, 2, stride=2)  # down sampling to a half size
 
     # 順方向計算
     def forward(self, x):
         x_input = x.clone()
         for l, bn in zip(self.conv1, self.bn1):
-            x = F.leaky_relu(bn(l(x)))
+            x = F.relu(bn(l(x)))
         x = x + x_input
-        x = self.ds1(x)
+        x = F.relu(self.ds1(x))
         return x
 
 
@@ -31,15 +31,15 @@ class us(nn.Module):
         super().__init__()
         self.conv1 = nn.ModuleList([nn.Conv2d(o_channel, o_channel, 3, padding=1) for _ in range(c_num)])
         self.bn1 = nn.ModuleList([nn.BatchNorm2d(o_channel) for _ in range(c_num)])
-        self.us1 = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)  # up sampling to a doubled size
+        self.us1 = nn.ConvTranspose2d(o_channel, o_channel, 2, stride=2)  # up sampling to a doubled size
 
     # 順方向計算
     def forward(self, x):
         x_input = x.clone()
         for l, bn in zip(self.conv1, self.bn1):
-            x = F.leaky_relu(bn(l(x)))
+            x = F.relu(bn(l(x)))
         x = x + x_input
-        x = self.us1(x)
+        x = F.relu(self.us1(x))
         return x
 
 
@@ -54,12 +54,12 @@ class encoder(nn.Module):
 
     # 順方向計算
     def forward(self, x):
-        x = F.leaky_relu(self.input_conv(x))
+        x = F.relu(self.input_conv(x))
         for l in self.down_sampling:
             x = l(x)
         x = x.view(-1, o_channel*(height//(2**s_num))*(width//(2**s_num)))  # flatten
         for l in self.fc1:
-            x = F.leaky_relu(l(x))
+            x = F.relu(l(x))
         x = self.output_fc(x)
         return x
 
@@ -75,9 +75,9 @@ class decoder(nn.Module):
 
     # 順方向計算
     def forward(self, x):
-        x = F.leaky_relu(self.input_fc(x))
+        x = F.relu(self.input_fc(x))
         for l in self.fc1:
-            x = F.leaky_relu(l(x))
+            x = F.relu(l(x))
         x = x.view(-1, o_channel, (height//(2**s_num)), (width//(2**s_num)))  # unflatten
         for l in self.up_sampling:
             x = l(x)
@@ -97,12 +97,12 @@ class encoder_vae(nn.Module):
 
     # 順方向計算
     def forward(self, x):
-        x = F.leaky_relu(self.input_conv(x))
+        x = F.relu(self.input_conv(x))
         for l in self.down_sampling:
             x = l(x)
         x = x.view(-1, o_channel*(height//(2**s_num))*(width//(2**s_num)))  # flatten
         for l in self.fc1:
-            x = F.leaky_relu(l(x))
+            x = F.relu(l(x))
         mean = self.mean_fc(x)
         log_var = self.var_fc(x)
         return mean, log_var
@@ -124,9 +124,9 @@ class decoder_vae(nn.Module):
 
     # 順方向計算
     def forward(self, x):
-        x = F.leaky_relu(self.input_fc(x))
+        x = F.relu(self.input_fc(x))
         for l in self.fc1:
-            x = F.leaky_relu(l(x))
+            x = F.relu(l(x))
         x = x.view(-1, o_channel, (height//(2**s_num)), (width//(2**s_num)))  # unflatten
         for l in self.up_sampling:
             x = l(x)

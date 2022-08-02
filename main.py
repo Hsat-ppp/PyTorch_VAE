@@ -11,5 +11,5 @@ with open('log_config.json', 'r') as f:
 logging.config.dictConfig(log_conf)
 
 if __name__ == '__main__':
-    # PyTorch_VAE.controller.controller.evaluate_model()
+    PyTorch_VAE.controller.controller.evaluate_model()
     PyTorch_VAE.controller.controller.visualize_training_result()
