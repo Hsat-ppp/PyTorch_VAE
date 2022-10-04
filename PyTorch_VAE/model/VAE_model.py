@@ -39,7 +39,7 @@ class VariationalAutoEncoderCNN(nn.Module):
     def decode(self, z):
         mean_dec, log_var_dec = self.decoder(z)
         if loss_mode.lower() == 'cel':
-            x = mean_dec.clone()
+            x = torch.sigmoid(mean_dec)
         elif loss_mode.lower() == 'mse':
             x = mean_dec + torch.exp(log_var_dec / 2.0)*(torch.randn(log_var_dec.shape).to(log_var_dec.get_device()))
         return mean_dec, log_var_dec, x
