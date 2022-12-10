@@ -70,8 +70,8 @@ class ModelTrainerVAE(object):
         :param labels:
         :return:
         """
-        mean, log_var, z, outputs = self.model(inputs)  # forward calculation
-        loss, recon_loss, kld_loss = self.criterion(mean, log_var, inputs, outputs)  # calculate loss
+        mean, log_var, z, outputs, mean_dec, log_var_dec = self.model(inputs)  # forward calculation
+        loss, recon_loss, kld_loss = self.criterion(mean, log_var, inputs, outputs, mean_dec, log_var_dec)  # calculate loss
         return loss, recon_loss, kld_loss
 
     def train(self, num_of_epochs, gamma_exp, is_quiet=False):
@@ -133,7 +133,7 @@ class ModelTrainerVAE(object):
 
             # update learning rate
             scheduler.step()
-            logger.info('learning rate adaption: {}'.format(scheduler.get_lr()[0]))
+            logger.info('learning rate adaption: {}'.format(scheduler.get_last_lr()[0]))
 
         logger.info('training end')
 

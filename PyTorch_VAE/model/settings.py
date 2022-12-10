@@ -1,5 +1,5 @@
 # methodology
-loss_mode = 'mse'
+likelihood_x = 'bernoulli'
 
 # configs
 parallel_gpu = True

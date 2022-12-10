@@ -38,13 +38,13 @@ class VariationalAutoEncoderCNN(nn.Module):
 
     def decode(self, z):
         mean_dec, log_var_dec = self.decoder(z)
-        if loss_mode.lower() == 'cel':
+        if likelihood_x.lower() == 'bernoulli':
             x = torch.sigmoid(mean_dec)
-        elif loss_mode.lower() == 'mse':
+        elif likelihood_x.lower() == 'gaussian':
             x = mean_dec + torch.exp(log_var_dec / 2.0)*(torch.randn(log_var_dec.shape).to(log_var_dec.get_device()))
         return mean_dec, log_var_dec, x
 
     def forward(self, x):
         mean, log_var, z = self.encode(x)
         mean_dec, log_var_dec, x = self.decode(z)
-        return mean, log_var, z, x
+        return mean, log_var, z, x, mean_dec, log_var_dec

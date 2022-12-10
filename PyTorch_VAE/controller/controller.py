@@ -84,7 +84,7 @@ def evaluate_model():
     trainer.set_loader(train_loader)
 
     # set criterion
-    trainer.set_criterion(PyTorch_VAE.model.loss_functions.VAELossMSE())
+    trainer.set_criterion(PyTorch_VAE.model.loss_functions.VAELoss())
     trainer.set_optimizer(optim.Adam(model.parameters(), lr=args.learning_rate))
 
     # run training and test
@@ -110,7 +110,7 @@ def visualize_training_result():
     trainer.set_loader(train_loader)
 
     # set criterion
-    trainer.set_criterion(PyTorch_VAE.model.loss_functions.VAELossMSE())
+    trainer.set_criterion(PyTorch_VAE.model.loss_functions.VAELoss())
 
     # visualizations
     trainer.generate_image_grid(args.quiet)
